@@ -33,7 +33,7 @@
           },
           "status": {
             "type": "string",
-            "enum": ["requested", "cancelled"],
+            "enum": ["requested", "cancelled", "completed"],
             "description": "Indicates the stage in it's lifecycle that this move is at"
           },
           "move_type": {
