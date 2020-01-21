@@ -22,7 +22,7 @@ gem 'pager_api'
 gem 'pg', '~> 1.0.0'
 gem 'prometheus_exporter'
 gem 'puma', '~> 3.12.2'
-gem 'rails', '~> 5.2.3'
+gem 'rails', '~> 6.0.1'
 gem 'sentry-raven'
 gem 'tty-prompt'
 
