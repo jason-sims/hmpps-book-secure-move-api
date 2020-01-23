@@ -2,10 +2,11 @@
 
 FactoryBot.define do
   factory :location do
+    location_codes = %w[LEI PEI MDI]
     key { 'hmp_pentonville' }
     title { 'HMP Pentonville' }
     location_type { Location::LOCATION_TYPE_PRISON }
-    nomis_agency_id { 'PEI' }
+    sequence(:nomis_agency_id) { |n| location_codes[n % location_codes.size] }
 
     trait :with_moves do
       after(:create) do |location, _|

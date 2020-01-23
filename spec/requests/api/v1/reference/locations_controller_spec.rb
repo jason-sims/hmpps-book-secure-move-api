@@ -110,7 +110,7 @@ RSpec.describe Api::V1::Reference::LocationsController, with_client_authenticati
 
     describe 'filters' do
       let!(:supplier) { create :supplier }
-      let!(:location) { create :location, suppliers: [supplier] }
+      let!(:location) { create :location, nomis_agency_id: 'PEI', suppliers: [supplier] }
       let(:filters) { { location_type: 'prison', nomis_agency_id: 'PEI', supplier_id: supplier.id } }
       let(:params) { { filter: filters } }
 

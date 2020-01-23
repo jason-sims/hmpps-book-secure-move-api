@@ -7,7 +7,7 @@ RSpec.describe LocationSerializer do
 
   let(:disabled_at) { Time.new(2019, 1, 1) }
   let(:supplier) { create(:supplier) }
-  let(:location) { create :location, disabled_at: disabled_at, suppliers: [supplier] }
+  let(:location) { create :location, nomis_agency_id: 'PEI', disabled_at: disabled_at, suppliers: [supplier] }
   let(:result) { JSON.parse(ActiveModelSerializers::Adapter.create(serializer).to_json).deep_symbolize_keys }
 
   it 'contains a type property' do

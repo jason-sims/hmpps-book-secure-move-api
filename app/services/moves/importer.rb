@@ -64,10 +64,12 @@ module Moves
       end
     end
 
+    # person and from_location are both required - so don't wait for the null issue on save
+    # detect and fail as early as possible
     def move_params(move)
       move.slice(:date, :time_due, :status, :nomis_event_id).merge(
-        person: Person.find_by(nomis_prison_number: move[:person_nomis_prison_number]),
-        from_location: Location.find_by(nomis_agency_id: move[:from_location_nomis_agency_id]),
+        person: Person.find_by!(nomis_prison_number: move.fetch(:person_nomis_prison_number)),
+        from_location: Location.find_by!(nomis_agency_id: move.fetch(:from_location_nomis_agency_id)),
         to_location: Location.find_by(nomis_agency_id: move[:to_location_nomis_agency_id]),
       )
     end
