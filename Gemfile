@@ -6,6 +6,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.6.2'
 
 gem 'active_model_serializers', '~> 0.10.0'
+gem 'aws-sdk-eventbridge'
 gem 'aws-sdk-s3', require: false
 gem 'bcrypt', require: false
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -17,7 +18,6 @@ gem 'net-http-persistent'
 gem 'nokogiri', '>= 1.10.4'
 gem 'oauth2'
 gem 'pager_api'
-gem 'papertrail'
 gem 'pg', '~> 1.0.0'
 gem 'prometheus_exporter'
 gem 'puma', '~> 3.12.2'
