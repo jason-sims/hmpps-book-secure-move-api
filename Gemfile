@@ -13,6 +13,8 @@ gem 'cancancan'
 # explicit soft-deletes
 gem 'discard'
 gem 'doorkeeper'
+# static page serving for extra API documentation
+gem 'high_voltage'
 gem 'json-schema'
 gem 'kaminari'
 gem 'net-http-persistent'
@@ -23,6 +25,7 @@ gem 'pg', '~> 1.0.0'
 gem 'prometheus_exporter'
 gem 'puma', '~> 3.12.2'
 gem 'rails', '~> 5.2.3'
+gem 'sassc-rails'
 gem 'sentry-raven'
 gem 'tty-prompt'
 gem 'validate_url', '~> 1.0.8'
@@ -57,7 +60,7 @@ group :development do
   gem 'rubocop-govuk'
   gem 'rubocop-rspec'
   gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  # gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 group :test do
