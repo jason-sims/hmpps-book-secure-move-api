@@ -51,7 +51,7 @@ RSpec.describe Api::V1::MovesController do
       it_behaves_like 'an endpoint that responds with error 401'
     end
 
-    context 'with an invalid CONTENT_TYPE header', with_client_authentication: true do
+    context 'with an invalid CONTENT_TYPE header', :with_client_authentication, :slow do
       let(:headers) { { 'CONTENT_TYPE': content_type }.merge(auth_headers) }
       let(:content_type) { 'application/xml' }
 

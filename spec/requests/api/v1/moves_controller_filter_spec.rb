@@ -2,20 +2,20 @@
 
 require 'rails_helper'
 
-RSpec.describe Api::V1::MovesController, with_client_authentication: true do
-  let(:headers) { { 'CONTENT_TYPE': content_type }.merge(auth_headers) }
-  let(:content_type) { ApiController::CONTENT_TYPE }
+RSpec.describe Api::V1::MovesController do
   let(:response_json) { JSON.parse(response.body) }
+  let!(:application) { create(:application, owner_id: supplier.id) }
+  let!(:token)       { create(:access_token, application: application) }
 
   describe 'GET /moves' do
     context 'when filtering' do
       let!(:supplier) { create :supplier }
       let!(:location) { create :location, :with_moves, suppliers: [supplier] }
       let!(:filtered_out_moves) { create_list :move, 10 }
-      let(:filter_params) { { filter: { supplier_id: supplier.id } } }
+      let(:filter_params) { { filter: { supplier_id: supplier.id }, access_token: token.token } }
 
       before do
-        get '/api/v1/moves', headers: headers, params: filter_params
+        get '/api/v1/moves', params: filter_params
       end
 
       describe 'by supplier_id' do

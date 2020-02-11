@@ -60,19 +60,19 @@ RSpec.describe Api::V1::DocumentsController, with_client_authentication: true do
       end
     end
 
-    context 'when not authorized', with_invalid_auth_headers: true do
+    context 'when not authorized', :with_invalid_auth_headers do
       let(:detail_401) { 'Token expired or invalid' }
 
       it_behaves_like 'an endpoint that responds with error 401'
     end
 
-    context 'when resource is not found' do
+    context 'when resource is not found', :slow do
       let(:document_id) { 'UUID-not-found' }
 
       it_behaves_like 'an endpoint that responds with error 404'
     end
 
-    context 'with an invalid CONTENT_TYPE header' do
+    context 'with an invalid CONTENT_TYPE header', :slow do
       let(:content_type) { 'application/xml' }
 
       it_behaves_like 'an endpoint that responds with error 415'

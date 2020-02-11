@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
-  let(:headers) { { 'CONTENT_TYPE': content_type }.merge(auth_headers) }
-  let(:content_type) { ApiController::CONTENT_TYPE }
+RSpec.describe Api::V1::PeopleController do
   let(:response_json) { JSON.parse(response.body) }
+  let!(:application) { create(:application) }
+  let!(:token)       { create(:access_token, application: application) }
 
   describe 'POST /people' do
     let(:schema) { load_json_schema('post_people_responses.json') }
@@ -104,24 +104,24 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
       end
 
       context 'with valid params' do
-        before { post '/api/v1/people', params: person_params, headers: headers, as: :json }
+        before { post '/api/v1/people', params: person_params.merge(access_token: token.token), as: :json }
 
         it_behaves_like 'an endpoint that responds with success 201'
       end
 
       it 'returns the correct data' do
-        post '/api/v1/people', params: person_params, headers: headers, as: :json
+        post '/api/v1/people', params: person_params.merge(access_token: token.token), as: :json
         expect(response_json).to include_json(data: expected_data.merge(id: Person.last&.id))
       end
 
       it 'returns the correct included resources' do
-        post '/api/v1/people', params: person_params, headers: headers, as: :json
+        post '/api/v1/people', params: person_params.merge(access_token: token.token), as: :json
         expect(response_json).to include_json(included: expected_included)
       end
 
       it 'creates a new person' do
         expect do
-          post '/api/v1/people', params: person_params, headers: headers, as: :json
+          post '/api/v1/people', params: person_params.merge(access_token: token.token), as: :json
         end.to change(Person, :count).by(1)
       end
     end
@@ -130,27 +130,30 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
       let(:gender_additional_information) { 'some additional info' }
 
       it 'updates an existing person' do
-        post '/api/v1/people', params: person_params, headers: headers, as: :json
+        post '/api/v1/people', params: person_params.merge(access_token: token.token), as: :json
         expect(Person.last.reload.latest_profile.gender_additional_information).to eq gender_additional_information
       end
     end
 
     context 'with a bad request' do
-      before { post '/api/v1/people', params: nil, headers: headers, as: :json }
+      before { post '/api/v1/people', params: { access_token: token.token }, as: :json }
 
       it_behaves_like 'an endpoint that responds with error 400'
     end
 
-    context 'when not authorized', with_invalid_auth_headers: true do
+    context 'when not authorized', :with_invalid_auth_headers, :with_client_authentication do
       let(:detail_401) { 'Token expired or invalid' }
+      let(:headers) { { 'CONTENT_TYPE': content_type }.merge(auth_headers) }
+      let(:content_type) { ApiController::CONTENT_TYPE }
 
       before { post '/api/v1/people', params: person_params, headers: headers, as: :json }
 
       it_behaves_like 'an endpoint that responds with error 401'
     end
 
-    context 'with an invalid CONTENT_TYPE header' do
+    context 'with an invalid CONTENT_TYPE header', :slow, :with_client_authentication do
       let(:content_type) { 'application/xml' }
+      let(:headers) { { 'CONTENT_TYPE': content_type }.merge(auth_headers) }
 
       before { post '/api/v1/people', params: person_params, headers: headers, as: :json }
 
@@ -178,7 +181,7 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
         ]
       end
 
-      before { post '/api/v1/people', params: person_params, headers: headers, as: :json }
+      before { post '/api/v1/people', params: person_params.merge(access_token: token.token), as: :json }
 
       it_behaves_like 'an endpoint that responds with error 422'
     end

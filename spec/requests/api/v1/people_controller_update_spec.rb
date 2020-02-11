@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
-  let(:headers) { { 'CONTENT_TYPE': content_type }.merge(auth_headers) }
-  let(:content_type) { ApiController::CONTENT_TYPE }
+RSpec.describe Api::V1::PeopleController do
+  let!(:application) { create(:application) }
+  let!(:token)       { create(:access_token, application: application) }
   let(:response_json) { JSON.parse(response.body) }
 
   describe 'PUT /api/v1/people' do
@@ -73,24 +73,24 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
       end
 
       context 'with valid params' do
-        before { put "/api/v1/people/#{person.id}", params: person_params, headers: headers, as: :json }
+        before { put "/api/v1/people/#{person.id}", params: person_params.merge(access_token: token.token), as: :json }
 
         it_behaves_like 'an endpoint that responds with success 200'
       end
 
       it 'returns the correct data' do
-        put "/api/v1/people/#{person.id}", params: person_params, headers: headers, as: :json
+        put "/api/v1/people/#{person.id}", params: person_params.merge(access_token: token.token), as: :json
         expect(JSON.parse(response.body)).to include_json(data: expected_data.merge(id: Person.last&.id))
       end
 
       it 'updates an existing person' do
         expect do
-          put "/api/v1/people/#{person.id}", params: person_params, headers: headers, as: :json
+          put "/api/v1/people/#{person.id}", params: person_params.merge(access_token: token.token), as: :json
         end.to change(Person, :count).by(0)
       end
 
       it 'changes the assessment answers' do
-        put "/api/v1/people/#{person.id}", params: person_params, headers: headers, as: :json
+        put "/api/v1/people/#{person.id}", params: person_params.merge(access_token: token.token), as: :json
         expect(person.latest_profile.reload.first_names).to include(expected_data[:attributes][:first_names])
       end
     end
@@ -99,18 +99,19 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
       let(:gender_additional_information) { 'some additional info' }
 
       it 'updates an existing person' do
-        put "/api/v1/people/#{person.id}", params: person_params, headers: headers, as: :json
+        put "/api/v1/people/#{person.id}", params: person_params.merge(access_token: token.token), as: :json
         expect(person.reload.latest_profile.gender_additional_information).to eq gender_additional_information
       end
     end
 
     context 'with a bad request' do
-      before { put "/api/v1/people/#{person.id}", params: {}, headers: headers, as: :json }
+      before { put "/api/v1/people/#{person.id}", params: { access_token: token.token }, as: :json }
 
       it_behaves_like 'an endpoint that responds with error 400'
     end
 
-    context 'when not authorized' do
+    context 'when not authorized', :with_client_authentication, :with_invalid_auth_headers do
+      let(:content_type) { ApiController::CONTENT_TYPE }
       let(:headers) { { 'CONTENT_TYPE': content_type } }
       let(:detail_401) { 'Token expired or invalid' }
 
@@ -119,8 +120,9 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
       it_behaves_like 'an endpoint that responds with error 401'
     end
 
-    context 'with an invalid CONTENT_TYPE header' do
+    context 'with an invalid CONTENT_TYPE header', :slow, :with_client_authentication do
       let(:content_type) { 'application/xml' }
+      let(:headers) { { 'CONTENT_TYPE': content_type }.merge(auth_headers) }
 
       before { put "/api/v1/people/#{person.id}", params: person_params, headers: headers, as: :json }
 
@@ -148,7 +150,7 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
         ]
       end
 
-      before { put "/api/v1/people/#{person.id}", params: person_params, headers: headers, as: :json }
+      before { put "/api/v1/people/#{person.id}", params: person_params.merge(access_token: token.token), as: :json }
 
       it_behaves_like 'an endpoint that responds with error 422'
     end

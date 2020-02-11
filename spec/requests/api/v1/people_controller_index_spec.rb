@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
-  let(:headers) { { 'CONTENT_TYPE': content_type }.merge(auth_headers) }
-  let(:content_type) { ApiController::CONTENT_TYPE }
+RSpec.describe Api::V1::PeopleController do
+  let!(:application) { create(:application) }
+  let!(:token)       { create(:access_token, application: application) }
   let(:response_json) { JSON.parse(response.body) }
 
   let(:schema) { load_json_schema('get_people_responses.json') }
@@ -13,7 +13,7 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
     describe 'filtering the results' do
       let!(:people) { create_list :person, 5 }
 
-      let(:params) { { filter: { police_national_computer: 'AB/1234567' } } }
+      let(:params) { { filter: { police_national_computer: 'AB/1234567' }, access_token: token.token } }
 
       context 'when called with police_national_computer filter' do
         before do
@@ -35,7 +35,7 @@ RSpec.describe Api::V1::PeopleController, with_client_authentication: true do
 
     context 'when Nomis offender number no is provided' do
       let(:nomis_offender_no) { 'G5033UT' }
-      let(:params) { { filter: { nomis_offender_no: 'G5033UT' } } }
+      let(:params) { { filter: { nomis_offender_no: 'G5033UT' }, access_token: token.token } }
       let(:people_finder) { instance_double('People::Finder', call: Person.all) }
 
       before do

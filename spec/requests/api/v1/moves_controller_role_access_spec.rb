@@ -46,60 +46,62 @@ RSpec.describe Api::V1::MovesController, with_client_authentication: true do
     end
   end
 
-  path '/moves/{move_id}' do
-    let!(:pentonville_move) { create :move, from_location: pentonville }
-    let!(:birmingham_move) { create :move, from_location: birmingham }
+  context 'with swagger generation', :rswag do
+    path '/moves/{move_id}' do
+      let!(:pentonville_move) { create :move, from_location: pentonville }
+      let!(:birmingham_move) { create :move, from_location: birmingham }
 
-    get 'Returns the details of a move' do
-      tags 'Moves'
-      produces 'application/vnd.api+json'
+      get 'Returns the details of a move' do
+        tags 'Moves'
+        produces 'application/vnd.api+json'
 
-      parameter name: :Authorization,
-                in: :header,
-                schema: {
-                  type: 'string',
-                  default: 'Bearer <your-client-token>',
-                },
-                required: true
+        parameter name: :Authorization,
+                  in: :header,
+                  schema: {
+                    type: 'string',
+                    default: 'Bearer <your-client-token>',
+                  },
+                  required: true
 
-      parameter name: 'Content-Type',
-                in: 'header',
-                description: 'Accepted request content type',
-                schema: {
-                  type: 'string',
-                  default: 'application/vnd.api+json',
-                },
-                required: true
+        parameter name: 'Content-Type',
+                  in: 'header',
+                  description: 'Accepted request content type',
+                  schema: {
+                    type: 'string',
+                    default: 'application/vnd.api+json',
+                  },
+                  required: true
 
-      parameter name: :move_id,
-                in: :path,
-                description: 'The ID of the move',
-                schema: {
-                  type: :string,
-                },
-                format: 'uuid',
-                example: '00525ecb-7316-492a-aae2-f69334b2a155',
-                required: true
+        parameter name: :move_id,
+                  in: :path,
+                  description: 'The ID of the move',
+                  schema: {
+                    type: :string,
+                  },
+                  format: 'uuid',
+                  example: '00525ecb-7316-492a-aae2-f69334b2a155',
+                  required: true
 
-      response '200', 'success' do
-        let(:move_id) { pentonville_move.id }
-        let(:resource_to_json) do
-          JSON.parse(ActionController::Base.render(json: pentonville_move, include: MoveSerializer::INCLUDED_ATTRIBUTES))
+        response '200', 'success' do
+          let(:move_id) { pentonville_move.id }
+          let(:resource_to_json) do
+            JSON.parse(ActionController::Base.render(json: pentonville_move, include: MoveSerializer::INCLUDED_ATTRIBUTES))
+          end
+
+          schema "$ref": '#/definitions/get_move_responses/200'
+
+          run_test! do |_example|
+            expect(response.headers['Content-Type']).to match(Regexp.escape(content_type))
+
+            expect(JSON.parse(response.body)).to eq resource_to_json
+          end
         end
 
-        schema "$ref": '#/definitions/get_move_responses/200'
+        response '401', 'unauthorised' do
+          let(:move_id) { birmingham_move.id }
 
-        run_test! do |_example|
-          expect(response.headers['Content-Type']).to match(Regexp.escape(content_type))
-
-          expect(JSON.parse(response.body)).to eq resource_to_json
+          it_behaves_like 'a swagger 401 error'
         end
-      end
-
-      response '401', 'unauthorised' do
-        let(:move_id) { birmingham_move.id }
-
-        it_behaves_like 'a swagger 401 error'
       end
     end
   end
