@@ -284,6 +284,9 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
     spring (2.1.0)
+    spring-watcher-listen (2.0.1)
+      listen (>= 2.7, < 4.0)
+      spring (>= 1.2, < 3.0)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -363,6 +366,7 @@ DEPENDENCIES
   shoulda-matchers
   simplecov
   spring
+  spring-watcher-listen (~> 2.0.0)
   timecop
   tty-prompt
   validate_url (~> 1.0.8)
