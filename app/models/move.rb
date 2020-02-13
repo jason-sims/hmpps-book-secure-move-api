@@ -47,6 +47,8 @@ class Move < ApplicationRecord
   validates :profile, presence: true
   validates :reference, presence: true
   validates :status, inclusion: { in: statuses }
+  # move has to be unique within date, person, from and to
+  validates :date, uniqueness: { scope: %i[profile_id from_location_id to_location_id] }
 
   before_validation :set_reference
   before_validation :set_move_type

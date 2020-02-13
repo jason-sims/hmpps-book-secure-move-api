@@ -87,7 +87,11 @@
             "example": "/data/attributes/property"
           }
         }
-      }
+      },
+      "meta": {
+        "type": "object"
+      },
+      "required": ["title", "code", "detail", "source"]
     }
   }
 }

@@ -22,8 +22,18 @@ module Api
       def create
         move = Move.new(move_attributes)
         authorize!(:create, move)
-        move.save!
-        render_move(move, 201)
+        if move.save
+          render_move(move, 201)
+        else
+          if move.errors.details[:date].map { |x| x[:error] }.include?(:taken)
+            # TODO: merge a 'meta' field with move_id: <moveid> into the response
+            render(json: { errors: validation_errors(move.errors) },
+                   status: :unprocessable_entity)
+          else
+            render(json: { errors: validation_errors(move.errors) },
+                   status: :unprocessable_entity)
+          end
+        end
       end
 
       def update

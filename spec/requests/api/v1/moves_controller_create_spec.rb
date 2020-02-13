@@ -59,7 +59,6 @@ RSpec.describe Api::V1::MovesController do
       it_behaves_like 'an endpoint that responds with error 415'
     end
 
-
     context 'when successful' do
       let(:move) { Move.first }
 
@@ -150,6 +149,30 @@ RSpec.describe Api::V1::MovesController do
             'code' => 'inclusion',
           },
         ]
+      end
+
+      it_behaves_like 'an endpoint that responds with error 422'
+    end
+
+    context 'with a duplicate move', :skip_before do
+      let!(:old_move) { create(:move, profile: profile, from_location: from_location, to_location: to_location) }
+      let(:profile) { create(:profile) }
+      let(:person) { profile.person }
+      let(:move_attributes) { attributes_for(:move).merge(profile: profile) }
+      let(:errors_422) do
+        [
+          {
+            'title' => 'Unprocessable entity',
+            'detail' => 'Date has already been taken',
+            'source' => { 'pointer' => '/data/attributes/date' },
+            'code' => 'taken',
+            'meta' => { 'move_id' => old_move.id },
+          },
+        ]
+      end
+
+      before do
+        post '/api/v1/moves', params: { data: data, access_token: token.token }, as: :json
       end
 
       it_behaves_like 'an endpoint that responds with error 422'
