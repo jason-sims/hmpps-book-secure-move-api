@@ -55,12 +55,21 @@ group :development, :test do
   gem 'timecop'
 end
 
+# These 2 things are needed to get govuk_tech_docs anywhere near installed
+# Challenges are that it depends on the whole of middleman (including serving pages)
+# rather than just the 'static site generator' which it is meant to be
+gem 'i18n', '< 1.0'
+gem 'sprockets', '= 4.0.0.beta10'
+
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'rubocop-govuk'
   gem 'rubocop-rspec'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  # middleman-cli seems to have an undeclared dependency (undefined constant MiddleMan)
+  # gem 'middleman-cli', '~> 4.3.5'
+  # gem "govuk_tech_docs", path: [ENV.fetch('HOME'), 'moj', 'tech-docs-gem'].join('/')
 end
 
 group :test do
