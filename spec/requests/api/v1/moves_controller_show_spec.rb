@@ -11,7 +11,7 @@ RSpec.describe Api::V1::MovesController, with_client_authentication: true do
     JSON.parse(ActionController::Base.render(json: move, include: MoveSerializer::INCLUDED_ATTRIBUTES))
   end
 
-  describe 'GET /moves/{moveId}' do
+  describe 'GET /moves/{move_id}' do
     let(:schema) { load_json_schema('get_move_responses.json') }
 
     let!(:move) { create :move }

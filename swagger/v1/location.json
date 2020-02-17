@@ -16,8 +16,10 @@
       "attributes": {
         "type": "object",
         "required": [
+          "key",
           "title",
-          "location_type"
+          "location_type",
+          "can_upload_documents"
         ],
         "properties": {
           "key": {

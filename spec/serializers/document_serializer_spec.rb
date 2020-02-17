@@ -7,24 +7,26 @@ RSpec.describe DocumentSerializer do
 
   let(:document) { create :document }
   let(:result) { JSON.parse(ActiveModelSerializers::Adapter.create(serializer).to_json).deep_symbolize_keys }
+  let(:result_data) { result[:data] }
+  let(:attributes) { result_data[:attributes] }
 
   it 'contains a type property' do
-    expect(result[:data][:type]).to eql 'documents'
+    expect(result_data[:type]).to eql 'documents'
   end
 
   it 'contains and `id` property' do
-    expect(result[:data][:id]).to eql document.id
+    expect(result_data[:id]).to eql document.id
   end
 
   it 'contains a `filename` attribute' do
-    expect(result[:data][:attributes][:filename]).to eql 'file-sample_100kB.doc'
+    expect(attributes[:filename]).to eql 'file-sample_100kB.doc'
   end
 
   it 'contains a `filesize` attribute' do
-    expect(result[:data][:attributes][:filesize]).to eql '98 KB'
+    expect(attributes[:filesize]).to be 100352
   end
 
   it 'contains a `content_type` attribute' do
-    expect(result[:data][:attributes][:content_type]).to eql 'application/msword'
+    expect(attributes[:content_type]).to eql 'application/msword'
   end
 end
