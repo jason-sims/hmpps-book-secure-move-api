@@ -211,6 +211,7 @@ workflows:
             branches:
               only:
                 - master
+                - fix-dockerfile-secret-key-base
       - deploy_staging:
           requires:
             - build_staging

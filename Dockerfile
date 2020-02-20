@@ -22,6 +22,7 @@ EXPOSE $PUMA_PORT
 ENV APPUID 1000
 USER $APPUID
 
-RUN rails assets:precompile
+# Have to set SECRET_KEY_BASE here to arbitrary string, otherwise task doesn't run
+SECRET_KEY_BASE=valuenotactuallyused RUN rails assets:precompile
 
 ENTRYPOINT ["./run.sh"]
