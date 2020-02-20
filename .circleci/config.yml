@@ -120,9 +120,9 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "Gemfile.lock" }}
+            - v3-dependencies-{{ checksum "Gemfile.lock" }}
             # fallback to using the latest cache if no exact match is found
-            - v2-dependencies-
+            - v3-dependencies-
 
       - run:
           name: install dependencies
@@ -132,7 +132,7 @@ jobs:
             sudo rm /usr/local/bin/bundle
             sudo rm /usr/local/bin/bundler
             sudo gem install -v2.1.4 bundler
-            bundle install
+            bundle check --path vendor/bundle || bundle install --path vendor/bundle
             sudo apt-get install -y apt-transport-https
             curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt-get install -y nodejs
@@ -144,7 +144,8 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: v2-dependencies-{{ checksum "Gemfile.lock" }}
+            - ./node_modules
+          key: v3-dependencies-{{ checksum "Gemfile.lock" }}
 
       # Database setup
       - run: bundle exec rake db:create
