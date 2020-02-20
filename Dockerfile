@@ -22,6 +22,8 @@ EXPOSE $PUMA_PORT
 ENV APPUID 1000
 USER $APPUID
 
+RUN yarn:install
+
 # Have to set SECRET_KEY_BASE here to arbitrary string, otherwise task doesn't run
 RUN SECRET_KEY_BASE=valuenotactuallyused rails assets:precompile
 
