@@ -111,6 +111,9 @@ RSpec.configure do |config|
           AssessmentQuestion: {
             "$ref": 'assessment_question.json#/AssessmentQuestion',
           },
+          Reason: {
+            "$ref": 'reason.json#/Reason',
+          },
           ProfileIdentifier: {
             "$ref": 'profile_identifier.json#/ProfileIdentifier',
           },
@@ -124,12 +127,14 @@ RSpec.configure do |config|
       },
       definitions: {
         document: load_swagger_json('document.json'),
-        location_reference: load_swagger_json('location_reference.json'),
-        get_move_responses: load_swagger_json('get_move_responses.json'),
         move: load_swagger_json('move.json'),
+        reason: load_swagger_json('reason.json'),
+        location_reference: load_swagger_json('location_reference.json'),
         person_reference: load_swagger_json('person_reference.json'),
-        post_document_responses: load_swagger_json('post_document_responses.json'),
+        get_move_responses: load_swagger_json('get_move_responses.json'),
+        get_reasons_responses: load_swagger_json('get_reasons_responses.json'),
         delete_document_responses: load_swagger_json('delete_document_responses.json'),
+        post_document_responses: load_swagger_json('post_document_responses.json'),
         errors: load_swagger_json('errors.json'),
         error_responses: load_swagger_json('error_responses.json'),
       },

@@ -119,12 +119,13 @@ ActiveRecord::Schema.define(version: 2020_02_19_105356) do
     t.text "cancellation_reason_comment"
     t.integer "nomis_event_ids", default: [], null: false, array: true
     t.uuid "profile_id", null: false
-    t.string "reason"
+    t.uuid "reason_id"
     t.text "reason_comment"
     t.boolean "agreed", default: false
     t.string "agreed_by"
     t.index ["from_location_id", "to_location_id", "person_id", "date"], name: "index_on_move_uniqueness", unique: true
     t.index ["from_location_id", "to_location_id", "profile_id", "date"], name: "index_move_loc_profile_date", unique: true
+    t.index ["reason_id"], name: "index_moves_on_reason_id"
     t.index ["reference"], name: "index_moves_on_reference", unique: true
   end
 
@@ -234,6 +235,12 @@ ActiveRecord::Schema.define(version: 2020_02_19_105356) do
     t.jsonb "profile_identifiers"
     t.string "gender_additional_information"
     t.integer "latest_nomis_booking_id"
+  end
+
+  create_table "reasons", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "key", null: false
+    t.string "title", null: false
+    t.index ["key"], name: "index_reasons_on_key"
   end
 
   create_table "subscriptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
