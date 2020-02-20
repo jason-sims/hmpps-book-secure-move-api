@@ -158,7 +158,7 @@ jobs:
           root: .
           paths:
             - swagger/v1/swagger.yaml
-            - node_modules/
+            - node_modules/*
 
       - *notify_slack
 
